@@ -1,0 +1,6 @@
+@Atithi.Web_HostAddress = http://localhost:5267
+
+GET {{Atithi.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
