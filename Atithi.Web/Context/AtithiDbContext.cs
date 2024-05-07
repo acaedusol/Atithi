@@ -20,9 +20,22 @@ namespace Atithi.Web.Context
                 .OnDelete(DeleteBehavior.Restrict); // Specify delete behavior
 
             modelBuilder.Entity<Category>()
-                .HasIndex(category =>  category.CategoryName)
+                .HasIndex(category => category.CategoryName)
                 .IsUnique();
+
+            modelBuilder.Entity<Order>()
+           .HasMany(o => o.OrderItems) // An Order has many OrderItems
+           .WithOne(oi => oi.Order) // An OrderItem has one Order
+           .HasForeignKey(oi => oi.OrderId) // The foreign key in OrderItem pointing to Order
+           .OnDelete(DeleteBehavior.Cascade); // Cascade delete
+
+            // Configure the one-to-many relationship between Menu and OrderItem
+            modelBuilder.Entity<Menu>()
+                .HasMany(m => m.OrderItems) // A Menu has many OrderItems
+                .WithOne(oi => oi.Menu) // An OrderItem has one Menu
+                .HasForeignKey(oi => oi.MenuItemId) // Foreign key in OrderItem pointing to Menu
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete on Menu
         }
     }
-
 }
+
