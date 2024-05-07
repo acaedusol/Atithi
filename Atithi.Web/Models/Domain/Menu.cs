@@ -17,6 +17,7 @@ namespace Atithi.Web.Models.Domain
 
         // Navigation property to the Category this menu item belongs to
         public Category Category { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 
 }

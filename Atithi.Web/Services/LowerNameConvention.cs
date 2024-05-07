@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Atithi.Web.Services
 {

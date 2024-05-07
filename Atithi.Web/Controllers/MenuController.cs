@@ -1,10 +1,8 @@
 ﻿using Atithi.Web.Context;
 using Atithi.Web.Models.Domain;
 using Atithi.Web.Models.DTO;
-using Atithi.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace Atithi.Web.Controllers
 {

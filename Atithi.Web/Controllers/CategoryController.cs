@@ -9,7 +9,7 @@ namespace Atithi.Web.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CategoryController: ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly AtithiDbContext _atithiDbContext;
         public CategoryController(AtithiDbContext atithiDbContext)
