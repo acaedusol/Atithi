@@ -7,8 +7,8 @@ namespace Atithi.Web.Context
     {
         public DbSet<Category> Categories { get; set; } // Category table
         public DbSet<Menu> Menus { get; set; } // Menu table
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderItem> OrderItem { get; set; }
         public AtithiDbContext(DbContextOptions<AtithiDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

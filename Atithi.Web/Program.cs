@@ -13,6 +13,7 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddScoped<IMenuService, MenuService>(); // Register with DI
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

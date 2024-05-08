@@ -48,8 +48,8 @@ namespace Atithi.Web.Services
             {
                 try
                 {
-                    await _atithiDbContext.Orders.AddAsync(order);
-                    await _atithiDbContext.OrderItems.AddRangeAsync(orderItems);
+                    await _atithiDbContext.Order.AddAsync(order);
+                    await _atithiDbContext.OrderItem.AddRangeAsync(orderItems);
                     await _atithiDbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
