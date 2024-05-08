@@ -40,5 +40,50 @@ namespace Atithi.Web.Controllers
             return Ok(true); // Return the created order
         }
 
+        [HttpPost("confirm-delivery")]
+        public async Task<IActionResult> ConfirmOrderDelivery([FromBody] OrderDeliveryDTO confirmOrderDto)
+        {
+            try
+            {
+                // Confirm the order delivery
+                var isConfirmed = await _orderService.ConfirmOrderDeliveryAsync(
+                    confirmOrderDto.OrderId,
+                    confirmOrderDto.RoomId);
+
+                if (!isConfirmed)
+                {
+                    // If the order was not found, return 404 Not Found
+                    return NotFound($"Order with ID {confirmOrderDto.OrderId} for Room {confirmOrderDto.RoomId} not found.");
+                }
+
+                return Ok("Order confirmed as delivered.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while confirming the order delivery.");
+            }
+        }
+
+        [HttpGet("orderDetails/{orderId}/{roomId}")]
+        public async Task<IActionResult> OrderDetails(Guid orderId, int roomId)
+        {
+            try
+            {
+                // Confirm the order delivery
+                var orderDetails = await _orderService.GetOrderDetailsAsync(orderId, roomId);
+
+                if (orderDetails == null)
+                {
+                    return NotFound($"No order found with ID {orderId} for Room {roomId}.");
+                }
+
+                return Ok(orderDetails); // Return the order details
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while Fetching the order details.");
+            }
+        }
+
     }
 }

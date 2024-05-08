@@ -1,6 +1,7 @@
 using Atithi.Web.Context;
 using Atithi.Web.Services;
 using Atithi.Web.Services.Interface;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,12 @@ builder.Services.AddDbContext<AtithiDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
+
+builder.Services.AddWebSockets(options =>
+{
+    options.KeepAliveInterval = TimeSpan.FromMinutes(5); // Keep-alive interval
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,10 +40,27 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseWebSockets();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/ws/orderstatus", async context =>
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            await OrderStatusWebSocket.HandleWebSocket(webSocket); // Handle WebSocket connections
+        }
+        else
+        {
+            context.Response.StatusCode = 400; // Not a WebSocket request
+        }
+    });
+});
 
 app.Run();
