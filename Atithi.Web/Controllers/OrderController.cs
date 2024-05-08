@@ -1,10 +1,7 @@
 ﻿using Atithi.Web.Context;
-using Atithi.Web.Models.Domain;
 using Atithi.Web.Models.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
 using Atithi.Web.Services.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Atithi.Web.Controllers
 {

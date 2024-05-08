@@ -11,7 +11,7 @@ namespace Atithi.Web.Services
     {
         private readonly AtithiDbContext _atithiDbContext;
 
-        public OrderService(AtithiDbContext atithiDbContext) 
+        public OrderService(AtithiDbContext atithiDbContext)
         {
             _atithiDbContext = atithiDbContext;
         }

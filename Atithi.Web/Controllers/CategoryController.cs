@@ -1,5 +1,4 @@
-﻿using Atithi.Web.Context;
-using Atithi.Web.Services.Interface;
+﻿using Atithi.Web.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

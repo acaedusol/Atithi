@@ -1,8 +1,5 @@
-﻿using System;
+﻿using System.Net.WebSockets;
 using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Net.WebSockets;
 
 namespace Atithi.Web.Services
 {
@@ -42,7 +39,7 @@ namespace Atithi.Web.Services
             }
         }
 
-        public static async Task SendOrderStatusUpdate(Guid orderId, bool status,int roomId)
+        public static async Task SendOrderStatusUpdate(Guid orderId, bool status, int roomId)
         {
             // Convert the status update to a JSON string
             var message = Encoding.UTF8.GetBytes($"{{\"OrderId\":\"{orderId}\", \"Status\":\"{status}\",\"RoomId\":\"{roomId}\"}}");

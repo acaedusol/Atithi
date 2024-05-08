@@ -20,7 +20,7 @@
     public class OrderDeliveryDTO
     {
         public Guid OrderId { get; set; }
-        public int RoomId { get; set;}
+        public int RoomId { get; set; }
     }
 
     public class OrderFetchDetailsDTO
