@@ -109,6 +109,7 @@ namespace Atithi.Web.Services
                 IsDelivered = order.IsDelivered,
                 OrderItems = order.OrderItems.Select(oi => new TotalOrderItemDTO
                 {
+                    MenuId = oi.Menu.MenuId,
                     ItemName = oi.Menu.ItemName, // Get the name from the related Menu
                     Quantity = oi.Quantity,
                     PriceOfEach = oi.Menu.Price,
