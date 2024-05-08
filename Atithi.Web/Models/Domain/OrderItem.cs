@@ -11,17 +11,6 @@
         public Order Order { get; set; } // The order to which this item belongs
         public Menu Menu { get; set; } // The menu item being ordered
 
-        public decimal CalculateItemTotal()
-        {
-            // Assuming you have a method to get the menu item price
-            decimal itemPrice = GetMenuItemPrice(MenuItemId);
-            return itemPrice * Quantity; // Calculate total price for this order item
-        }
-
-        private decimal GetMenuItemPrice(Guid menuItemId)
-        {
-            return 10;
-        }
     }
 
 }

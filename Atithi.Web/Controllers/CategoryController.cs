@@ -1,7 +1,5 @@
 ﻿using Atithi.Web.Context;
-using Atithi.Web.Models.Domain;
-using Atithi.Web.Models.DTO;
-using Atithi.Web.Services;
+using Atithi.Web.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +9,10 @@ namespace Atithi.Web.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly AtithiDbContext _atithiDbContext;
-        public CategoryController(AtithiDbContext atithiDbContext)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
-            this._atithiDbContext = atithiDbContext;
+            this._categoryService = categoryService;
         }
 
         [HttpPost("{categoryName}")]
@@ -25,16 +23,10 @@ namespace Atithi.Web.Controllers
                 return BadRequest("Category name is required.");
             }
 
-            var category = new Category
-            {
-                CategoryId = Guid.NewGuid(),
-                CategoryName = categoryName.ToLower()
-            };
-
             try
             {
-                this._atithiDbContext.Categories.Add(category);
-                await this._atithiDbContext.SaveChangesAsync();
+                var result = await _categoryService.AddCategoryItem(categoryName);
+                return Ok(result);
             }
             catch (DbUpdateException dbEx)
             {
@@ -45,7 +37,6 @@ namespace Atithi.Web.Controllers
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
 
-            return Ok(); // Return the created category
         }
 
         [HttpGet("{categoryId:guid}")] // Fetch category by its GUID
@@ -54,21 +45,13 @@ namespace Atithi.Web.Controllers
             try
             {
                 // Fetch the category with the given ID
-                var category = await this._atithiDbContext.Categories
-                    .FirstOrDefaultAsync(c => c.CategoryId == categoryId);
+                var result = await _categoryService.GetCategoryById(categoryId);
 
-                if (category == null)
+                if (result == null)
                 {
                     // If no category is found, return a 404 Not Found response
                     return NotFound($"Category with ID {categoryId} not found.");
                 }
-
-                CategoryDTO result = new CategoryDTO
-                {
-                    CategoryId = category.CategoryId,
-                    CategoryName = category.CategoryName.ToTitleCase(),
-                };
-
                 // Return the category
                 return Ok(result);
             }
@@ -82,19 +65,40 @@ namespace Atithi.Web.Controllers
             }
         }
 
+        [HttpGet("categorymenu")] // Endpoint for fetching all categories
+        public async Task<IActionResult> GetAllCategoryMenu()
+        {
+            try
+            {
+                // Fetch all categories from the database
+                var categoryMenu = await this._categoryService.GetMenuByCategoryAsync();
+
+                if (categoryMenu == null || !categoryMenu.Any())
+                {
+                    // If no categories are found, return an appropriate response
+                    return NotFound("No Data found.");
+                }
+
+                // Return the list of categories
+                return Ok(categoryMenu);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, "An error occurred while fetching categories. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred. Please try again later.");
+            }
+        }
+
         [HttpGet] // Endpoint for fetching all categories
         public async Task<IActionResult> GetAllCategories()
         {
             try
             {
                 // Fetch all categories from the database
-                var categories = await this._atithiDbContext.Categories
-                    .Select(category => new CategoryDTO
-                    {
-                        CategoryId = category.CategoryId,
-                        CategoryName = category.CategoryName.ToTitleCase(),
-                    })
-                    .ToListAsync();
+                var categories = await this._categoryService.GetAllCategory();
 
                 if (categories == null || !categories.Any())
                 {

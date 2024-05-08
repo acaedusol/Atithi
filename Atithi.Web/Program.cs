@@ -1,5 +1,6 @@
 using Atithi.Web.Context;
 using Atithi.Web.Services;
+using Atithi.Web.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ builder.Services.AddControllers(options =>
 {
     options.Conventions.Add(new LowercaseControllerNameConvention());
 });
+builder.Services.AddScoped<IMenuService, MenuService>(); // Register with DI
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
