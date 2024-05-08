@@ -39,16 +39,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseWebSockets();
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
+app.UseWebSockets();
+app.UseRouting();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapControllers(); // Maps controller-based endpoints
+
+    // WebSocket endpoint for order status
     endpoints.MapGet("/ws/orderstatus", async context =>
     {
         if (context.WebSockets.IsWebSocketRequest)
