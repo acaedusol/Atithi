@@ -13,24 +13,5 @@
         // Navigation property to the list of order items
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-        public decimal CalculateTotalPrice()
-        {
-            decimal total = 0;
-            foreach (var orderItem in OrderItems)
-            {
-                total += orderItem.CalculateItemTotal(); // Sum the total for all order items
-            }
-            return total; // Return the total price for this order
-        }
-
-        // Business rules and domain logic for the order
-        public void MarkAsDelivered()
-        {
-            // Business logic to mark the order as delivered
-            if (!IsDelivered)
-            {
-                IsDelivered = true; // Mark as delivered
-            }
-        }
     }
 }

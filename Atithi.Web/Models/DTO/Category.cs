@@ -6,4 +6,10 @@
         public string CategoryName { get; set; } // Name of the category
     }
 
+    public class CategoryMenuDTO
+    {
+        public Guid CategoryId { get; set; }
+        public string CategoryName { get; set; }
+        public List<MenuDTO> Items { get; set; } = new List<MenuDTO>(); // List of MenuDTO
+    }
 }

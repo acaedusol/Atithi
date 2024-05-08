@@ -1,6 +1,5 @@
-﻿using Atithi.Web.Context;
-using Atithi.Web.Models.Domain;
-using Atithi.Web.Models.DTO;
+﻿using Atithi.Web.Models.DTO;
+using Atithi.Web.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +9,10 @@ namespace Atithi.Web.Controllers
     [ApiController]
     public class MenuController : ControllerBase
     {
-        private readonly AtithiDbContext _atithiDbContext;
-        public MenuController(AtithiDbContext atithiDbContext)
+        private readonly IMenuService _menuService;
+        public MenuController(IMenuService menuService)
         {
-            this._atithiDbContext = atithiDbContext;
+            this._menuService = menuService;
         }
 
         [HttpPost]
@@ -23,19 +22,9 @@ namespace Atithi.Web.Controllers
             {
                 return BadRequest("Menu item name is required.");
             }
-
-            var menu = new Menu
-            {
-                MenuId = Guid.NewGuid(),
-                ItemName = menuDto.ItemName,
-                Price = menuDto.Price,
-                Availability = menuDto.Availability,
-                CategoryId = menuDto.CategoryId
-            };
             try
             {
-                this._atithiDbContext.Menus.Add(menu);
-                await this._atithiDbContext.SaveChangesAsync();
+                bool result = await _menuService.AddMenuItem(menuDto);
             }
             catch (DbUpdateException dbEx)
             {
@@ -46,7 +35,7 @@ namespace Atithi.Web.Controllers
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
 
-            return Ok(); // Return the created menu DTO
+            return Ok(true);
         }
 
         [HttpGet()]
@@ -55,16 +44,7 @@ namespace Atithi.Web.Controllers
             try
             {
                 // Fetch all menu items and map them to MenuDTO objects
-                var menuItems = await this._atithiDbContext.Menus
-                    .Select(menu => new MenuDTO
-                    {
-                        MenuId = menu.MenuId,
-                        ItemName = menu.ItemName,
-                        Price = menu.Price,
-                        Availability = menu.Availability,
-                        CategoryId = menu.CategoryId
-                    })
-                    .ToListAsync(); // Asynchronous database call
+                var menuItems = await _menuService.GetAllMenu();
 
                 if (menuItems == null || menuItems.Count == 0)
                 {
