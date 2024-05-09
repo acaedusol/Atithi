@@ -7,6 +7,6 @@ namespace Atithi.Web.Services.Interface
         Task<bool> ConfirmOrderDeliveryAsync(Guid orderId, int roomId);
         Task<MenuDTO> GetOrderByRoomId(int RoomId); // Fetch a menu item by MenuId
         Task<OrderFetchDetailsDTO> GetOrderDetailsAsync(Guid orderId, int roomId);
-        Task<bool> PlaceOrder(OrderDetailsDTO orderDetails);
+        Task<Guid> PlaceOrder(OrderDetailsDTO orderDetails);
     }
 }

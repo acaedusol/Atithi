@@ -25,16 +25,16 @@ namespace Atithi.Web.Controllers
             {
                 return BadRequest("Invalid order data. Room ID and order items are required.");
             }
-
+            Guid result;
             try
             {
-                var result = await _orderService.PlaceOrder(orderDetails);
+                result = await _orderService.PlaceOrder(orderDetails);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred while placing the order. Please try again later.");
             }
-            return Ok(true); // Return the created order
+            return Ok(result); // Return the created order
         }
 
         [HttpPost("confirm-delivery")]

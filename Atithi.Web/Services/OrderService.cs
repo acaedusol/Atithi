@@ -21,7 +21,7 @@ namespace Atithi.Web.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> PlaceOrder(OrderDetailsDTO orderDetails)
+        public async Task<Guid> PlaceOrder(OrderDetailsDTO orderDetails)
         {
             var orderId = Guid.NewGuid();
             var order = new Order
@@ -60,7 +60,7 @@ namespace Atithi.Web.Services
                     throw;
                 }
             }
-            return true;
+            return orderId;
         }
 
         public async Task<bool> ConfirmOrderDeliveryAsync(Guid orderId, int roomId)
