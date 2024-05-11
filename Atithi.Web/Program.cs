@@ -1,8 +1,11 @@
 using Atithi.Web.Context;
 using Atithi.Web.Services;
 using Atithi.Web.Services.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,9 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var corsOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+
 var connectionString = builder.Configuration.GetConnectionString("AtithiDbConnectionStrings");
 builder.Services.AddDbContext<AtithiDbContext>(options =>
 {
@@ -34,10 +40,10 @@ builder.Services.AddWebSockets(options =>
 builder.Services.AddCors(options => options.AddPolicy(name: "FrontendUI",
     policy =>
     {
-        policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
-        policy.WithOrigins("https://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+        policy.WithOrigins(corsOrigins).AllowAnyMethod().AllowAnyHeader();
     }
     ));
+
 
 var app = builder.Build();
 
