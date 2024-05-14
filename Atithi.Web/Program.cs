@@ -1,11 +1,11 @@
 using Atithi.Web.Context;
 using Atithi.Web.Services;
 using Atithi.Web.Services.Interface;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using System.Net;
+using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +18,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddScoped<IMenuService, MenuService>(); // Register with DI
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<OrderedDeliveredService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -32,15 +33,11 @@ builder.Services.AddDbContext<AtithiDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
-builder.Services.AddWebSockets(options =>
-{
-    options.KeepAliveInterval = TimeSpan.FromMinutes(5); // Keep-alive interval
-});
-
 builder.Services.AddCors(options => options.AddPolicy(name: "FrontendUI",
     policy =>
     {
         policy.WithOrigins(corsOrigins).AllowAnyMethod().AllowAnyHeader();
+        //policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     }
     ));
 
@@ -58,34 +55,22 @@ app.UseCors("FrontendUI");
 app.UseHttpsRedirection();
 
 app.MapControllers();
-app.UseWebSockets();
 app.UseRouting();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
+app.MapGet("/send/{param1}/{param2}", async (Guid param1, int param2, CancellationToken ct,OrderedDeliveredService service, HttpContext ctx) =>
 {
-    // WebSocket endpoint for order status
-    endpoints.MapGet("/ws/orderstatus", async context =>
-    {
-        if (context.WebSockets.IsWebSocketRequest)
-        {
-            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-            if (webSocket != null)
-            {
-                Console.WriteLine("WebSocket connection accepted");
-                await OrderStatusWebSocket.HandleWebSocket(webSocket);
-            }
-            else
-            {
-                Console.WriteLine("WebSocket connection failed");
-                context.Response.StatusCode = 400;
-            }
-        }
-        else
-        {
-            context.Response.StatusCode = 400; // Not a WebSocket request
-        }
-    });
-});
+    ctx.Response.Headers.Add("Content-Type", "text/event-stream");
 
+    await foreach (var item in service.GetNewItemsAsync(param1, param2, ct))
+    {
+        if (ct.IsCancellationRequested)
+            break;
+
+        await ctx.Response.WriteAsync($"data: {JsonSerializer.Serialize(item)}\n\n");
+        await ctx.Response.Body.FlushAsync();
+    }
+
+    await ctx.Response.WriteAsync($"data: ");
+});
 app.Run();

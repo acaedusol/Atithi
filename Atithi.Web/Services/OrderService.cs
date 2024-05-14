@@ -81,9 +81,6 @@ namespace Atithi.Web.Services
 
             order.IsDelivered = true;
             await _atithiDbContext.SaveChangesAsync();
-
-            await OrderStatusWebSocket.SendOrderStatusUpdate(orderId, order.IsDelivered, roomId);
-
             return true;
         }
 
