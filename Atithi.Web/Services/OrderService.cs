@@ -4,6 +4,7 @@ using Atithi.Web.Models.DTO;
 using Atithi.Web.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System;
 
 namespace Atithi.Web.Services
 {
@@ -23,12 +24,15 @@ namespace Atithi.Web.Services
 
         public async Task<Guid> PlaceOrder(OrderDetailsDTO orderDetails)
         {
+            DateTime utcNow = DateTime.UtcNow;
+            TimeZoneInfo istZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+            DateTime istNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, istZone);
             var orderId = Guid.NewGuid();
             var order = new Order
             {
                 OrderId = orderId,
                 IsDelivered = false,
-                OrderDate = DateTime.Now,
+                OrderDate = istNow,
                 RoomId = orderDetails.RoomId
             };
 
